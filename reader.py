@@ -111,20 +111,14 @@ class ReaderToolInput(BaseModel):
 
 
 class ReaderTool(BaseTool):
-    """Reader tool for getting website title and contents. Gives more control than SimpleReaderTool."""
-
-    name: str = "read_page"
-    args_schema: Type[BaseModel] = ReaderToolInput
-    description: str = "use this to read a website"
-
     def _run(self, url: str, include_body: bool = True, cursor: int = 0) -> str:
         page_contents = get_url(url, include_body=include_body)
 
+        # Calcular o novo cursor após a paginação
+        new_cursor = cursor + MAX_RESULT_LENGTH_CHAR
         if len(page_contents) > MAX_RESULT_LENGTH_CHAR:
             page_contents = page_result(page_contents, cursor, MAX_RESULT_LENGTH_CHAR)
-            page_contents += f"\nPAGE WAS TRUNCATED. TO CONTINUE READING, USE CURSOR={cursor+len(page_contents)}."
+            page_contents += f"\nPAGE WAS TRUNCATED. TO CONTINUE READING, USE CURSOR={new_cursor}."
 
         return page_contents
 
-    async def _arun(self, url: str) -> str:
-        raise NotImplementedError
