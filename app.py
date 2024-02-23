@@ -1,20 +1,24 @@
-# app.py
-
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pydantic import ValidationError
-from reader import ReaderTool, ReaderToolInput
+from categories import CategoriesReaderToolInput, CategoryURLMapper
 
 app = Flask(__name__)
+
+mapper = CategoryURLMapper()
 
 @app.route('/read-url', methods=['POST'])
 def read_url():
     
-    input_data = ReaderToolInput(**request.json)
+    try:
+        input_data = CategoriesReaderToolInput(**request.json)
+        category = input_data.category
+        urls = mapper.get_urls_by_category(category)
+        return jsonify(urls)
+    except ValidationError as e:
+        return jsonify({"error": str(e)}), 400
     
-    reader_tool = ReaderTool()
-
-    result = reader_tool._run(url=input_data.url, include_body=input_data.include_body, cursor=input_data.cursor)
-    return result    
+    
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
