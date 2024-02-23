@@ -1,5 +1,6 @@
 from typing import Type
 
+from pydantic import BaseModel
 import trafilatura
 from langchain.tools.base import BaseTool
 from newspaper import Article
@@ -94,6 +95,7 @@ class SimpleReaderTool(BaseTool):
 
 
 class ReaderToolInput(BaseModel):
+    
     url: str = Field(..., description="URL of the website to read")
     include_body: bool = Field(
         default=True,
@@ -111,6 +113,11 @@ class ReaderToolInput(BaseModel):
 
 
 class ReaderTool(BaseTool):
+
+    def __init__(self, **kwargs):
+        # Definindo `name` e `description` explicitamente no construtor
+        super().__init__(name="read_page", description="use this to read a website", **kwargs)  
+    
     def _run(self, url: str, include_body: bool = True, cursor: int = 0) -> str:
         page_contents = get_url(url, include_body=include_body)
 
