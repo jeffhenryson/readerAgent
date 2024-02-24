@@ -1,3 +1,4 @@
 readerEnv
 __pycache__
 .env
+unittest

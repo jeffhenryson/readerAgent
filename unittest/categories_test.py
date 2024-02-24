@@ -27,7 +27,6 @@ class TestCategoryURLMapper(unittest.TestCase):
         self.mapper = CategoryURLMapper()
     
     def test_get_urls_by_category_found(self):
-        # Corrigido para testar a categoria 'Política' com as URLs corretas
         category = 'Política'
         expected_urls = ['https://jovempan.com.br/noticias/politica', 'https://noticias.r7.com/brasilia/noticias']
         result = self.mapper.get_urls_by_category(category)
